@@ -9,8 +9,8 @@ const Duration _monthScrollDuration = Duration(milliseconds: 200);
 typedef OnSelectedDate = Function(DateTime);
 typedef OnMonthChanged = Function(DateTime);
 
-class FlutterADBSCalendar extends StatefulWidget {
-  FlutterADBSCalendar({
+class FlutterBSADCalendar extends StatefulWidget {
+  FlutterBSADCalendar({
     Key? key,
     this.calendarType = CalendarType.bs,
     this.firstDate,
@@ -55,10 +55,10 @@ class FlutterADBSCalendar extends StatefulWidget {
   final OnMonthChanged onMonthChanged;
 
   @override
-  _FlutterADBSCalendarState createState() => _FlutterADBSCalendarState();
+  _FlutterBSADCalendarState createState() => _FlutterBSADCalendarState();
 }
 
-class _FlutterADBSCalendarState extends State<FlutterADBSCalendar> {
+class _FlutterBSADCalendarState extends State<FlutterBSADCalendar> {
   late PageController _pageController;
   late List<DateTime> _daysInMonth;
   late DateTime _selectedDate;
