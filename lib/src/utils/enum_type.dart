@@ -7,10 +7,10 @@ enum CalendarType {
   bs,
 }
 
-// The typeof widget to display in the view [Day/Month] or [Year]
+// The type of widget to display in the view [Day/Month] or [Year]
 enum DisplayType {
   // Show month.
   month,
-  // Show yeay.
+  // Show year.
   year,
 }

@@ -15,7 +15,10 @@ class FlutterBSADCalendar extends StatefulWidget {
     this.calendarType = CalendarType.bs,
     this.firstDate,
     this.lastDate,
+    this.mondayWeek = false,
+    this.sundayWeekend = false,
     this.primaryColor,
+    this.weekColor,
     this.holidayColor,
     this.todayDecoration,
     this.selectedDayDecoration,
@@ -33,8 +36,17 @@ class FlutterBSADCalendar extends StatefulWidget {
   /// The latest date the user is permitted to pick [firstDate].
   DateTime? lastDate;
 
+  /// Weather Start of the week is [Sunday] or [Monday].
+  bool mondayWeek;
+
+  /// Days in week to be considered as weekend .
+  bool sundayWeekend;
+
   /// Primary calendar theme color
   final Color? primaryColor;
+
+  /// Week name color
+  final Color? weekColor;
 
   /// Holiday calendar theme color
   final Color? holidayColor;
@@ -93,11 +105,11 @@ class _FlutterBSADCalendarState extends State<FlutterBSADCalendar> {
 
   List<DateTime> _englishDaysInMonth(DateTime date) {
     final first = Utils.firstDayOfMonth(date);
-    final daysBefore = first.weekday % 7;
+    final daysBefore =
+        (widget.mondayWeek ? first.weekday - 1 : first.weekday) % 7;
     final firstToDisplay = first.subtract(Duration(days: daysBefore));
-
     final last = Utils.lastDayOfMonth(date);
-    var daysAfter = 7 - last.weekday;
+    var daysAfter = 7 - (widget.mondayWeek ? last.weekday - 1 : last.weekday);
     if (daysAfter == 0) {
       daysAfter = 7;
     }
@@ -114,10 +126,11 @@ class _FlutterBSADCalendarState extends State<FlutterBSADCalendar> {
     DateTime last = NepaliDateTime(nepalitDate.year, nepalitDate.month,
             _nepaliMonthDays[nepalitDate.year]![nepalitDate.month])
         .toDateTime();
-    final daysBefore = first.weekday % 7;
+    final daysBefore =
+        (widget.mondayWeek ? first.weekday - 1 : first.weekday) % 7;
     final firstToDisplay = first.subtract(Duration(days: daysBefore));
 
-    var daysAfter = 7 - last.weekday;
+    var daysAfter = 7 - (widget.mondayWeek ? last.weekday - 1 : last.weekday);
     if (daysAfter == 0) {
       daysAfter = 7;
     }
@@ -211,95 +224,39 @@ class _FlutterBSADCalendarState extends State<FlutterBSADCalendar> {
     setState(() {});
   }
 
-  Widget _buildMonth(BuildContext context) {
-    switch (widget.calendarType) {
-      case CalendarType.bs:
-        return Column(
-          children: [
-            Text(
-              NepaliDateFormat('MMMM yyyy')
-                  .format(_focusedDate.toNepaliDateTime()),
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  color: widget.primaryColor ?? Theme.of(context).primaryColor),
-            ),
-            Text(
-              '${DateFormat.MMMM().format(_focusedDate)}/${DateFormat.MMMM().format(_focusedDate.add(const Duration(days: 32)))}',
-              style: Theme.of(context).textTheme.titleSmall,
-            ),
-          ],
-        );
-      case CalendarType.ad:
-        return Column(
-          children: [
-            Text(
-              DateFormat('MMMM yyyy').format(_focusedDate),
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  color: widget.primaryColor ?? Theme.of(context).primaryColor),
-            ),
-            Text(
-              '${NepaliDateFormat.MMMM().format(_focusedDate.toNepaliDateTime())}/${NepaliDateFormat.MMMM().format(_focusedDate.add(const Duration(days: 32)).toNepaliDateTime())}',
-              style: Theme.of(context).textTheme.titleSmall,
-            ),
-          ],
-        );
-      default:
-        return const SizedBox.shrink();
-    }
-  }
-
   Widget _buildWeekRow(BuildContext context, int index) {
     _daysInMonth = widget.calendarType == CalendarType.bs
         ? _nepaliDaysInMonth(_focusedDate)
         : _englishDaysInMonth(_focusedDate);
+
+    List weeks = [];
+    if (widget.mondayWeek) {
+      weeks = widget.calendarType == CalendarType.bs
+          ? Utils.nepaliMondayWeek
+          : Utils.englishMondayWeek;
+    } else {
+      weeks = widget.calendarType == CalendarType.bs
+          ? Utils.nepaliWeek
+          : Utils.englishWeek;
+    }
 
     return Column(
       children: [
         Table(
           children: <TableRow>[
             TableRow(
-              children: widget.calendarType == CalendarType.bs
-                  ? Utils.nepaliWeek
-                      .map(
-                        (day) => Center(
-                          child: Text(
-                            day,
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleSmall
-                                ?.copyWith(
-                                    color: day == Utils.nepaliWeek[6]
-                                        ? Theme.of(context)
-                                            .colorScheme
-                                            .secondary
-                                        : Theme.of(context)
-                                            .textTheme
-                                            .titleSmall
-                                            ?.color),
-                          ),
-                        ),
-                      )
-                      .toList()
-                  : Utils.englishWeek
-                      .map(
-                        (day) => Center(
-                          child: Text(
-                            day,
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleSmall
-                                ?.copyWith(
-                                    color: day == Utils.englishWeek[6]
-                                        ? Theme.of(context)
-                                            .colorScheme
-                                            .secondary
-                                        : Theme.of(context)
-                                            .textTheme
-                                            .titleSmall
-                                            ?.color),
-                          ),
-                        ),
-                      )
-                      .toList(),
+              children: weeks
+                  .map(
+                    (day) => Center(
+                      child: Text(
+                        day,
+                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                            color: widget.weekColor ??
+                                Theme.of(context).textTheme.titleSmall?.color),
+                      ),
+                    ),
+                  )
+                  .toList(),
             ),
           ],
         ),
@@ -334,7 +291,7 @@ class _FlutterBSADCalendarState extends State<FlutterBSADCalendar> {
             } else if (!Utils.isSameMonth(
                 widget.calendarType, _focusedDate, dayToBuild)) {
               color = Colors.grey.withOpacity(0.5);
-            } else if (Utils.isSaturday(dayToBuild)) {
+            } else if (Utils.isWeekend(dayToBuild, widget.sundayWeekend)) {
               color = widget.holidayColor ??
                   Theme.of(context).colorScheme.secondary;
             } else {
@@ -350,12 +307,8 @@ class _FlutterBSADCalendarState extends State<FlutterBSADCalendar> {
                 ),
                 child: widget.dayBuilder == null
                     ? DayBuilder(
-                        todayDay: DateTime.now(),
-                        selectedDay: _selectedDate,
                         dayToBuild: dayToBuild,
                         calendarType: widget.calendarType,
-                        isSameMonth: Utils.isSameMonth(
-                            widget.calendarType, _focusedDate, dayToBuild),
                         color: color,
                       )
                     : widget.dayBuilder!(dayToBuild),
@@ -403,9 +356,10 @@ class _FlutterBSADCalendarState extends State<FlutterBSADCalendar> {
             children: [
               GestureDetector(
                 onTap: _handleDisplayTypeChanged,
-                child: SizedBox(
-                  height: 45.0,
-                  child: _buildMonth(context),
+                child: MonthName(
+                  focusedDate: _focusedDate,
+                  primaryColor: widget.primaryColor,
+                  calendarType: widget.calendarType,
                 ),
               ),
               Visibility(

@@ -6,4 +6,5 @@ export 'src/utils/calendar_utils.dart';
 export 'src/utils/constants_data.dart';
 export 'src/utils/utils.dart';
 export 'src/widgets/day_buider.dart';
+export 'src/widgets/month_name.dart';
 export 'src/widgets/nepali_year_picker.dart';

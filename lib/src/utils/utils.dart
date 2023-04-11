@@ -13,6 +13,17 @@ class Utils {
     "शुक्र",
     "शनि",
   ];
+
+  static List nepaliMondayWeek = [
+    "सोम",
+    "मंगल",
+    "बुध",
+    "बिही",
+    "शुक्र",
+    "शनि",
+    "आइत",
+  ];
+
   static List englishWeek = [
     "Sun",
     "Mon",
@@ -21,6 +32,16 @@ class Utils {
     "Thu",
     "Fri",
     "Sat",
+  ];
+
+  static List englishMondayWeek = [
+    "Mon",
+    "Tue",
+    "Wed",
+    "Thu",
+    "Fri",
+    "Sat",
+    "Sun",
   ];
 
   /// Get the differene between two [DateTime] in month.
@@ -57,8 +78,14 @@ class Utils {
   }
 
   /// Whether or not the day is saturday.
-  static bool isSaturday(DateTime day) =>
-      DateFormat('EEEE').format(day) == 'Saturday';
+  static bool isWeekend(DateTime day, bool weekend) {
+    if (weekend) {
+      return DateFormat('EEEE').format(day) == 'Saturday' ||
+          DateFormat('EEEE').format(day) == 'Sunday';
+    } else {
+      return DateFormat('EEEE').format(day) == 'Saturday';
+    }
+  }
 
   static DateTime firstDayOfMonth(DateTime month) {
     return DateTime(month.year, month.month);

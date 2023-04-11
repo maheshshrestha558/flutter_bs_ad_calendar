@@ -69,6 +69,9 @@ class _MyHomePageState extends State<MyHomePage> {
         calendarType: _calendarType,
         firstDate: DateTime(1970),
         lastDate: DateTime(2024),
+        mondayWeek: false, // true is for Monday, false is  for Sunday
+        sundayWeekend:
+            false, // true is for Sunday and Saturday, false is  for Sunday
         onMonthChanged: (date) {
           print('month changed: ${date.toString()}');
         },
@@ -77,35 +80,36 @@ class _MyHomePageState extends State<MyHomePage> {
         },
         primaryColor: Colors.blue,
         holidayColor: Colors.red,
-        todayDecoration: BoxDecoration(
-          borderRadius: const BorderRadius.all(Radius.circular(10)),
-          color: Theme.of(context).primaryColorLight,
-          shape: BoxShape.rectangle,
-        ),
-        selectedDayDecoration: BoxDecoration(
-          borderRadius: const BorderRadius.all(Radius.circular(10)),
-          color: Theme.of(context).primaryColorDark,
-          shape: BoxShape.rectangle,
-        ),
-        dayBuilder: (dayToBuild) {
-          return Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 8.0,
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Align(
-                  alignment: Alignment.topCenter,
-                  child: Text(
-                    '${dayToBuild.day}',
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  ),
-                ),
-              ],
-            ),
-          );
-        },
+        // weekColor: Colors.purple,
+        // todayDecoration: BoxDecoration(
+        //   borderRadius: const BorderRadius.all(Radius.circular(10)),
+        //   color: Theme.of(context).primaryColorLight,
+        //   shape: BoxShape.rectangle,
+        // ),
+        // selectedDayDecoration: BoxDecoration(
+        //   borderRadius: const BorderRadius.all(Radius.circular(10)),
+        //   color: Theme.of(context).primaryColorDark,
+        //   shape: BoxShape.rectangle,
+        // ),
+        // dayBuilder: (dayToBuild) {
+        //   return Container(
+        //     padding: const EdgeInsets.symmetric(
+        //       horizontal: 8.0,
+        //     ),
+        //     child: Column(
+        //       mainAxisAlignment: MainAxisAlignment.center,
+        //       children: [
+        //         Align(
+        //           alignment: Alignment.topCenter,
+        //           child: Text(
+        //             '${dayToBuild.day}',
+        //             style: Theme.of(context).textTheme.bodyMedium,
+        //           ),
+        //         ),
+        //       ],
+        //     ),
+        //   );
+        // },
         // eventColor: Theme.of(context).colorScheme.secondary,
         // selectedEventColor: Theme.of(context).primaryColorDark,
       ),
