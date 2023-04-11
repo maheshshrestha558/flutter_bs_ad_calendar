@@ -1,7 +1,7 @@
 
 Calendar widget that can switch between Nepali Date [BS] and English Date [AD].
 
-![Image](screenshot1.jpg)(screenshot2.jpg)
+![Image](screenshot1.jpg)![Image](screenshot2.jpg)
 
 
 ## Features
