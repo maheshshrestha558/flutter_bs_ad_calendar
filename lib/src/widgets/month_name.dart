@@ -18,11 +18,13 @@ class MonthName extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    TextStyle? titleStyle = Theme.of(context).textTheme.titleMedium?.copyWith(
-          color: primaryColor ?? Theme.of(context).primaryColor,
-        );
+    TextStyle? titleStyle = Theme.of(context)
+        .textTheme
+        .titleMedium
+        ?.copyWith(color: primaryColor ?? Theme.of(context).primaryColor);
 
-    TextStyle? subTitleStyle = Theme.of(context).textTheme.titleSmall;
+    TextStyle? subTitleStyle = Theme.of(context).textTheme.titleSmall?.copyWith(
+        fontSize: 12.0, color: primaryColor ?? Theme.of(context).primaryColor);
 
     return SizedBox(
       height: 48.0,

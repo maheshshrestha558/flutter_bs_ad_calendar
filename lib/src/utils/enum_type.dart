@@ -6,11 +6,3 @@ enum CalendarType {
   /// Nepali Calendar [BS].
   bs,
 }
-
-// The type of widget to display in the view [Day/Month] or [Year]
-enum DisplayType {
-  // Show month.
-  month,
-  // Show year.
-  year,
-}

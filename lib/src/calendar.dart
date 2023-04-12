@@ -1,22 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:nepali_utils/nepali_utils.dart';
 
 import '../flutter_bs_ad_calendar.dart';
 
 const Duration _monthScrollDuration = Duration(milliseconds: 200);
 
-typedef OnSelectedDate = Function(DateTime);
-typedef OnMonthChanged = Function(DateTime);
+typedef OnSelectedDate<T> = Function(T selectedDate);
+typedef OnMonthChanged<T> = Function(T selectedDate);
 
-class FlutterBSADCalendar extends StatefulWidget {
+class FlutterBSADCalendar<T> extends StatefulWidget {
   FlutterBSADCalendar({
     Key? key,
     this.calendarType = CalendarType.bs,
     this.firstDate,
     this.lastDate,
+    this.holidays,
     this.mondayWeek = false,
-    this.sundayWeekend = false,
+    this.weekendDays = const [DateTime.saturday],
+    this.events,
     this.primaryColor,
     this.weekColor,
     this.holidayColor,
@@ -36,11 +37,18 @@ class FlutterBSADCalendar extends StatefulWidget {
   /// The latest date the user is permitted to pick [firstDate].
   DateTime? lastDate;
 
+  /// The List of holiday dates.
+  List<DateTime>? holidays;
+
+  /// List of events assigned to a specified day.
+  final List<T>? events;
+
   /// Weather Start of the week is [Sunday] or [Monday].
   bool mondayWeek;
 
-  /// Days in week to be considered as weekend .
-  bool sundayWeekend;
+  /// List of days in week to be considered as weekend.
+  /// Use built-in [DateTime] weekday constants (e.g '1' is for 'DateTime.monday')
+  List<int> weekendDays;
 
   /// Primary calendar theme color
   final Color? primaryColor;
@@ -76,7 +84,7 @@ class _FlutterBSADCalendarState extends State<FlutterBSADCalendar> {
   late DateTime _selectedDate;
   late DateTime _focusedDate;
   late int _currentMonthIndex;
-  late DisplayType _displayType;
+  late DatePickerMode _displayType;
 
   late Map<int, List<int>> _nepaliMonthDays;
 
@@ -84,7 +92,7 @@ class _FlutterBSADCalendarState extends State<FlutterBSADCalendar> {
   void initState() {
     super.initState();
 
-    _displayType = DisplayType.month;
+    _displayType = DatePickerMode.day;
     _daysInMonth = [];
     _selectedDate = DateTime.now();
     _focusedDate = DateTime.now();
@@ -141,9 +149,9 @@ class _FlutterBSADCalendarState extends State<FlutterBSADCalendar> {
 
   void _handleDisplayTypeChanged() {
     setState(() {
-      _displayType = _displayType == DisplayType.month
-          ? DisplayType.year
-          : DisplayType.month;
+      _displayType = _displayType == DatePickerMode.day
+          ? DatePickerMode.year
+          : DatePickerMode.day;
     });
   }
 
@@ -196,7 +204,7 @@ class _FlutterBSADCalendarState extends State<FlutterBSADCalendar> {
     }
 
     setState(() {
-      _displayType = DisplayType.month;
+      _displayType = DatePickerMode.day;
       _handleMonthChanged(value);
     });
   }
@@ -291,7 +299,11 @@ class _FlutterBSADCalendarState extends State<FlutterBSADCalendar> {
             } else if (!Utils.isSameMonth(
                 widget.calendarType, _focusedDate, dayToBuild)) {
               color = Colors.grey.withOpacity(0.5);
-            } else if (Utils.isWeekend(dayToBuild, widget.sundayWeekend)) {
+            } else if (Utils.isWeekend(dayToBuild,
+                weekendDays: widget.weekendDays)) {
+              color = widget.holidayColor ??
+                  Theme.of(context).colorScheme.secondary;
+            } else if (Utils.holidays(dayToBuild, widget.holidays)) {
               color = widget.holidayColor ??
                   Theme.of(context).colorScheme.secondary;
             } else {
@@ -363,7 +375,7 @@ class _FlutterBSADCalendarState extends State<FlutterBSADCalendar> {
                 ),
               ),
               Visibility(
-                visible: _displayType == DisplayType.month,
+                visible: _displayType == DatePickerMode.day,
                 child: Row(
                   children: [
                     IconButton(
@@ -399,7 +411,7 @@ class _FlutterBSADCalendarState extends State<FlutterBSADCalendar> {
         const SizedBox(height: 5.0),
         SizedBox(
           height: 380,
-          child: _displayType == DisplayType.month
+          child: _displayType == DatePickerMode.day
               ? PageView.builder(
                   controller: _pageController,
                   itemCount: DateUtils.monthDelta(

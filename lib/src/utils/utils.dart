@@ -78,13 +78,26 @@ class Utils {
   }
 
   /// Whether or not the day is saturday.
-  static bool isWeekend(DateTime day, bool weekend) {
-    if (weekend) {
-      return DateFormat('EEEE').format(day) == 'Saturday' ||
-          DateFormat('EEEE').format(day) == 'Sunday';
-    } else {
-      return DateFormat('EEEE').format(day) == 'Saturday';
+  static bool isWeekend(
+    DateTime day, {
+    List<int> weekendDays = const [DateTime.saturday],
+  }) {
+    return weekendDays.contains(day.weekday);
+    // if (weekend) {
+    //   return DateFormat('EEEE').format(day) == 'Saturday' ||
+    //       DateFormat('EEEE').format(day) == 'Sunday';
+    // } else {
+    //   return DateFormat('EEEE').format(day) == 'Saturday';
+    // }
+  }
+
+  static bool holidays(DateTime day, List<DateTime>? holidays) {
+    for (DateTime holiday in holidays ?? []) {
+      if (holiday.difference(day).inDays == 0) {
+        return true;
+      }
     }
+    return false;
   }
 
   static DateTime firstDayOfMonth(DateTime month) {
