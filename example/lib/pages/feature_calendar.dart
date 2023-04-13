@@ -76,12 +76,12 @@ class _FeatureCalendarState extends State<FeatureCalendar> {
           color: Theme.of(context).primaryColorDark,
           shape: BoxShape.rectangle,
         ),
-        onMonthChanged: (date) {
+        onMonthChanged: (date, events) {
           setState(() {
             _selectedDate = date;
           });
         },
-        onDateSelected: (date) {
+        onDateSelected: (date, events) {
           setState(() {
             _selectedDate = date;
           });

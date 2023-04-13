@@ -6,6 +6,7 @@ import 'package:flutter_bs_ad_calendar/flutter_bs_ad_calendar.dart';
 import 'package:nepali_utils/nepali_utils.dart';
 
 import 'pages/basic_calendar.dart';
+import 'pages/event_calendar.dart';
 import 'pages/feature_calendar.dart';
 
 void main() {
@@ -148,6 +149,14 @@ class _MyHomePageState extends State<MyHomePage> {
               onPressed: () => Navigator.push(
                 context,
                 MaterialPageRoute(builder: (_) => const FeatureCalendar()),
+              ),
+            ),
+            const SizedBox(height: 15.0),
+            ElevatedButton(
+              child: const Text('Calendar with Event'),
+              onPressed: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const EventCalendar()),
               ),
             ),
             const SizedBox(height: 30.0),

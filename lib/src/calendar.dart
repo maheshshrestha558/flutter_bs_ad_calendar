@@ -5,8 +5,8 @@ import '../flutter_bs_ad_calendar.dart';
 
 const Duration _monthScrollDuration = Duration(milliseconds: 200);
 
-typedef OnSelectedDate<T> = Function(T selectedDate);
-typedef OnMonthChanged<T> = Function(T selectedDate);
+typedef OnSelectedDate<T> = Function(T selectedDate, List<Event>? events);
+typedef OnMonthChanged<T> = Function(T selectedDate, List<Event>? events);
 
 class FlutterBSADCalendar<T> extends StatefulWidget {
   FlutterBSADCalendar({
@@ -41,7 +41,7 @@ class FlutterBSADCalendar<T> extends StatefulWidget {
   List<DateTime>? holidays;
 
   /// List of events assigned to a specified day.
-  final List<T>? events;
+  final List<Event>? events;
 
   /// Weather Start of the week is [Sunday] or [Monday].
   bool mondayWeek;
@@ -164,6 +164,7 @@ class _FlutterBSADCalendarState extends State<FlutterBSADCalendar> {
       duration: _monthScrollDuration,
       curve: Curves.easeInOut,
     );
+    _handleMonthChanged(_focusedDate);
     setState(() {});
   }
 
@@ -176,6 +177,7 @@ class _FlutterBSADCalendarState extends State<FlutterBSADCalendar> {
       duration: _monthScrollDuration,
       curve: Curves.easeInOut,
     );
+    _handleMonthChanged(_focusedDate);
     setState(() {});
   }
 
@@ -193,6 +195,7 @@ class _FlutterBSADCalendarState extends State<FlutterBSADCalendar> {
       _focusedDate = DateTime(year, month, _focusedDate.day);
       _currentMonthIndex = monthPage == 0 ? 12 : monthPage;
     }
+    _handleMonthChanged(_focusedDate);
     setState(() {});
   }
 
@@ -209,27 +212,56 @@ class _FlutterBSADCalendarState extends State<FlutterBSADCalendar> {
     });
   }
 
-  void _handleMonthChanged(DateTime date) {
-    setState(() {
-      if (_focusedDate.year != date.year || _focusedDate.month != date.month) {
-        _focusedDate = DateTime(date.year, date.month);
-        widget.onMonthChanged(_focusedDate);
-      }
-    });
+  void _handleMonthChanged(DateTime currentDate) {
+    if (_focusedDate.year != currentDate.year ||
+        _focusedDate.month != currentDate.month) {
+      var date = widget.calendarType == CalendarType.ad
+          ? currentDate
+          : currentDate.toNepaliDateTime();
+      List<Event>? monthsEvents = widget.events
+          ?.where((item) => item.date?.month == currentDate.month)
+          .toList();
+      widget.onMonthChanged(date, monthsEvents);
+      _focusedDate = DateTime(date.year, date.month);
+    }
+    setState(() {});
   }
 
-  _handleDateSelected(DateTime date) {
-    _selectedDate = date;
-    widget.onDateSelected(widget.calendarType == CalendarType.ad
-        ? date
-        : date.toNepaliDateTime());
-    _focusedDate = DateTime(date.year, date.month);
-    if (Utils.differenceInMonths(_focusedDate, date) > 0) {
+  void _handleDateSelected(DateTime currentDate) {
+    _selectedDate = currentDate;
+
+    var date = widget.calendarType == CalendarType.ad
+        ? currentDate
+        : currentDate.toNepaliDateTime();
+    List<Event>? todaysEvents = widget.events
+        ?.where((item) => item.date?.difference(currentDate).inDays == 0)
+        .toList();
+    widget.onDateSelected(date, todaysEvents);
+    _focusedDate = DateTime(currentDate.year, currentDate.month);
+    if (Utils.differenceInMonths(_focusedDate, currentDate) > 0) {
       _handleNextMonth();
-    } else if (Utils.differenceInMonths(_focusedDate, date) < 0) {
+    } else if (Utils.differenceInMonths(_focusedDate, currentDate) < 0) {
       _handlePreviousMonth();
     }
     setState(() {});
+  }
+
+  bool _checkEventOnDate(DateTime day) {
+    if (widget.events != null) {
+      for (Event event in widget.events!) {
+        if (event.date?.difference(day).inDays == 0) {
+          if (widget.calendarType == CalendarType.ad &&
+              day.month == _focusedDate.month) {
+            return true;
+          } else if (widget.calendarType == CalendarType.bs &&
+              day.toNepaliDateTime().month ==
+                  _focusedDate.toNepaliDateTime().month) {
+            return true;
+          }
+        }
+      }
+    }
+    return false;
   }
 
   Widget _buildWeekRow(BuildContext context, int index) {
@@ -317,13 +349,33 @@ class _FlutterBSADCalendarState extends State<FlutterBSADCalendar> {
                 padding: const EdgeInsets.symmetric(
                   horizontal: 8.0,
                 ),
-                child: widget.dayBuilder == null
-                    ? DayBuilder(
-                        dayToBuild: dayToBuild,
-                        calendarType: widget.calendarType,
-                        color: color,
-                      )
-                    : widget.dayBuilder!(dayToBuild),
+                child: Stack(
+                  children: [
+                    widget.dayBuilder == null
+                        ? DayBuilder(
+                            dayToBuild: dayToBuild,
+                            calendarType: widget.calendarType,
+                            color: color,
+                          )
+                        : widget.dayBuilder!(dayToBuild),
+                    Positioned(
+                      bottom: 0.0,
+                      child: Visibility(
+                        visible: _checkEventOnDate(dayToBuild),
+                        child: Container(
+                          width: 5.0,
+                          height: 5.0,
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).colorScheme.secondary,
+                            borderRadius: const BorderRadius.all(
+                              Radius.circular(500.0),
+                            ),
+                          ),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
               ),
             );
           },

@@ -20,12 +20,12 @@ class _BasicCalendarState extends State<BasicCalendar> {
       body: FlutterBSADCalendar(
         firstDate: DateTime(1970),
         lastDate: DateTime(2024),
-        onMonthChanged: (date) {
+        onMonthChanged: (date, events) {
           setState(() {
             _selectedDate = date;
           });
         },
-        onDateSelected: (date) {
+        onDateSelected: (date, events) {
           setState(() {
             _selectedDate = date;
           });

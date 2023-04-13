@@ -1,6 +1,7 @@
 library flutter_bs_ad_calendar;
 
 export 'src/calendar.dart';
+export 'src/model/event.dart';
 export 'src/utils/enum_type.dart';
 export 'src/utils/calendar_utils.dart';
 export 'src/utils/constants_data.dart';
