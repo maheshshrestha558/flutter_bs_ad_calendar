@@ -17,21 +17,22 @@ class DayBuilder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
+    return Stack(
       children: [
-        Align(
-          alignment: Alignment.topCenter,
+        Container(
+          alignment: Alignment.center,
           child: Text(
             calendarType == CalendarType.bs
                 ? NepaliDateFormat.d().format(dayToBuild.toNepaliDateTime())
                 : '${dayToBuild.day}',
+            textAlign: TextAlign.center,
             style:
                 Theme.of(context).textTheme.bodyMedium?.copyWith(color: color),
           ),
         ),
-        Align(
+        Container(
           alignment: Alignment.bottomRight,
+          padding: const EdgeInsets.all(8.0),
           child: Text(
             calendarType == CalendarType.bs
                 ? '${dayToBuild.day}'

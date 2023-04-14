@@ -18,7 +18,6 @@ class _DynamicCalendarState extends State<DynamicCalendar> {
     // TODO: implement initState
     super.initState();
 
-    NepaliUtils(Language.nepali);
     _calendarType = CalendarType.ad;
   }
 
@@ -41,6 +40,7 @@ class _DynamicCalendarState extends State<DynamicCalendar> {
         ],
       ),
       body: FlutterBSADCalendar(
+        initialDate: DateTime.now(),
         calendarType: _calendarType,
         firstDate: DateTime(1970),
         lastDate: DateTime(2024),

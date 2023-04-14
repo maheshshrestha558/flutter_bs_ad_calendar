@@ -27,7 +27,6 @@ class _EventCalendarState extends State<EventCalendar> {
   void initState() {
     super.initState();
 
-    NepaliUtils(Language.nepali);
     _calendarType = CalendarType.bs;
     _events = _getEvents();
   }
@@ -97,6 +96,7 @@ class _EventCalendarState extends State<EventCalendar> {
       ),
       body: FlutterBSADCalendar(
         calendarType: _calendarType,
+        initialDate: DateTime.now(),
         firstDate: DateTime(1970),
         lastDate: DateTime(2024),
         mondayWeek: false, // true is for Monday, false is  for Sunday

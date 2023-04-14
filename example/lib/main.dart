@@ -2,8 +2,6 @@ import 'dart:collection';
 
 import 'package:calendar_example/pages/dynamic_calendar.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bs_ad_calendar/flutter_bs_ad_calendar.dart';
-import 'package:nepali_utils/nepali_utils.dart';
 
 import 'pages/basic_calendar.dart';
 import 'pages/event_calendar.dart';
@@ -60,69 +58,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title ?? ''),
-        // actions: [
-        //   ElevatedButton(
-        //     onPressed: () {
-        //       if (_calendarType == CalendarType.ad) {
-        //         setState(() => _calendarType = CalendarType.bs);
-        //       } else {
-        //         setState(() => _calendarType = CalendarType.ad);
-        //       }
-        //     },
-        //     child: Text(_calendarType == CalendarType.bs ? 'En' : 'ने'),
-        //   ),
-        // ],
       ),
-      // body: FlutterBSADCalendar(
-      //   calendarType: _calendarType,
-      //   firstDate: DateTime(1970),
-      //   lastDate: DateTime(2024),
-      //   mondayWeek: false, // true is for Monday, false is  for Sunday
-      //   weekendDays: const [
-      //     DateTime.saturday,
-      //   ],
-      //   holidays: _holidays, events: [],
-      //   onMonthChanged: (date) {
-      //     print('month changed: $date');
-      //   },
-      //   onDateSelected: (date) {
-      //     print('selected day: $date');
-      //   },
-      //   primaryColor: Colors.blue,
-      //   holidayColor: Colors.red,
-      //   weekColor: Colors.purple,
-      //    todayDecoration: BoxDecoration(
-      //      borderRadius: const BorderRadius.all(Radius.circular(10)),
-      //     color: Theme.of(context).primaryColorLight,
-      //      shape: BoxShape.rectangle,
-      //    ),
-      //    selectedDayDecoration: BoxDecoration(
-      //      borderRadius: const BorderRadius.all(Radius.circular(10)),
-      //      color: Theme.of(context).primaryColorDark,
-      //     shape: BoxShape.rectangle,
-      //   ),
-      //   // dayBuilder: (dayToBuild) {
-      //   //   return Container(
-      //   //     padding: const EdgeInsets.symmetric(
-      //   //       horizontal: 8.0,
-      //   //     ),
-      //   //     child: Column(
-      //   //       mainAxisAlignment: MainAxisAlignment.center,
-      //   //       children: [
-      //   //         Align(
-      //   //           alignment: Alignment.topCenter,
-      //   //           child: Text(
-      //   //             '${dayToBuild.day}',
-      //   //             style: Theme.of(context).textTheme.bodyMedium,
-      //   //           ),
-      //   //         ),
-      //   //       ],
-      //   //     ),
-      //   //   );
-      //   // },
-      //   // eventColor: Theme.of(context).colorScheme.secondary,
-      //   // selectedEventColor: Theme.of(context).primaryColorDark,
-      // ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

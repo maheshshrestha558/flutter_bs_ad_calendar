@@ -10,10 +10,11 @@ typedef OnMonthChanged<T> = Function(T selectedDate, List<Event>? events);
 
 class FlutterBSADCalendar<T> extends StatefulWidget {
   FlutterBSADCalendar({
-    Key? key,
+    super.key,
     this.calendarType = CalendarType.bs,
-    this.firstDate,
-    this.lastDate,
+    required DateTime initialDate,
+    required DateTime firstDate,
+    required DateTime lastDate,
     this.holidays,
     this.mondayWeek = false,
     this.weekendDays = const [DateTime.saturday],
@@ -25,30 +26,48 @@ class FlutterBSADCalendar<T> extends StatefulWidget {
     this.selectedDayDecoration,
     this.dayBuilder,
     required this.onDateSelected,
-    required this.onMonthChanged,
-  }) : super(key: key);
+    this.onMonthChanged,
+  })  : initialDate = DateUtils.dateOnly(initialDate),
+        firstDate = DateUtils.dateOnly(firstDate),
+        lastDate = DateUtils.dateOnly(lastDate) {
+    assert(
+      !this.lastDate.isBefore(this.firstDate),
+      'lastDate ${this.lastDate} must be on or after firstDate ${this.firstDate}.',
+    );
+    assert(
+      !this.initialDate.isBefore(this.firstDate),
+      'initialDate ${this.initialDate} must be on or after firstDate ${this.firstDate}.',
+    );
+    assert(
+      !this.initialDate.isAfter(this.lastDate),
+      'initialDate ${this.initialDate} must be on or before lastDate ${this.lastDate}.',
+    );
+  }
 
   /// The [CalendarType] displayed in the calendar.
   final CalendarType calendarType;
 
+  /// The initially selected [DateTime] that the picker should display.
+  final DateTime initialDate;
+
   /// The earliest date the user is permitted to pick [lastDate].
-  DateTime? firstDate;
+  final DateTime firstDate;
 
   /// The latest date the user is permitted to pick [firstDate].
-  DateTime? lastDate;
+  final DateTime lastDate;
 
   /// The List of holiday dates.
-  List<DateTime>? holidays;
+  final List<DateTime>? holidays;
 
   /// List of events assigned to a specified day.
   final List<Event>? events;
 
   /// Weather Start of the week is [Sunday] or [Monday].
-  bool mondayWeek;
+  final bool mondayWeek;
 
   /// List of days in week to be considered as weekend.
   /// Use built-in [DateTime] weekday constants (e.g '1' is for 'DateTime.monday')
-  List<int> weekendDays;
+  final List<int> weekendDays;
 
   /// Primary calendar theme color
   final Color? primaryColor;
@@ -72,10 +91,10 @@ class FlutterBSADCalendar<T> extends StatefulWidget {
   final OnSelectedDate onDateSelected;
 
   /// Called when the user changes month.
-  final OnMonthChanged onMonthChanged;
+  final OnMonthChanged? onMonthChanged;
 
   @override
-  _FlutterBSADCalendarState createState() => _FlutterBSADCalendarState();
+  State<FlutterBSADCalendar> createState() => _FlutterBSADCalendarState();
 }
 
 class _FlutterBSADCalendarState extends State<FlutterBSADCalendar> {
@@ -92,14 +111,15 @@ class _FlutterBSADCalendarState extends State<FlutterBSADCalendar> {
   void initState() {
     super.initState();
 
+    NepaliUtils(Language.nepali);
     _displayType = DatePickerMode.day;
     _daysInMonth = [];
     _selectedDate = DateTime.now();
-    _focusedDate = DateTime.now();
-    widget.firstDate = widget.firstDate ?? ConstantData.firstDate;
-    widget.lastDate = widget.lastDate ?? ConstantData.lastDate;
+    _focusedDate = widget.initialDate;
+    // widget.firstDate = widget.firstDate ?? ConstantData.firstDate;
+    // widget.lastDate = widget.lastDate ?? ConstantData.lastDate;
     _nepaliMonthDays = initializeDaysInMonths();
-    _currentMonthIndex = _focusedDate.month - 1;
+    _currentMonthIndex = widget.initialDate.month - 1;
     _pageController = PageController(initialPage: _currentMonthIndex);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -200,10 +220,10 @@ class _FlutterBSADCalendarState extends State<FlutterBSADCalendar> {
   }
 
   void _handleYearChanged(DateTime value) {
-    if (value.isBefore(widget.firstDate!)) {
-      value = widget.firstDate!;
-    } else if (value.isAfter(widget.lastDate!)) {
-      value = widget.lastDate!;
+    if (value.isBefore(widget.firstDate)) {
+      value = widget.firstDate;
+    } else if (value.isAfter(widget.lastDate)) {
+      value = widget.lastDate;
     }
 
     setState(() {
@@ -221,8 +241,8 @@ class _FlutterBSADCalendarState extends State<FlutterBSADCalendar> {
       List<Event>? monthsEvents = widget.events
           ?.where((item) => item.date?.month == currentDate.month)
           .toList();
-      widget.onMonthChanged(date, monthsEvents);
-      _focusedDate = DateTime(date.year, date.month);
+      widget.onMonthChanged?.call(date, monthsEvents);
+      // _focusedDate = DateTime(date.year, date.month);
     }
     setState(() {});
   }
@@ -236,7 +256,7 @@ class _FlutterBSADCalendarState extends State<FlutterBSADCalendar> {
     List<Event>? todaysEvents = widget.events
         ?.where((item) => item.date?.difference(currentDate).inDays == 0)
         .toList();
-    widget.onDateSelected(date, todaysEvents);
+    widget.onDateSelected.call(date, todaysEvents);
     _focusedDate = DateTime(currentDate.year, currentDate.month);
     if (Utils.differenceInMonths(_focusedDate, currentDate) > 0) {
       _handleNextMonth();
@@ -389,8 +409,8 @@ class _FlutterBSADCalendarState extends State<FlutterBSADCalendar> {
       case CalendarType.ad:
         return YearPicker(
           currentDate: _selectedDate,
-          firstDate: widget.firstDate!,
-          lastDate: widget.lastDate!,
+          firstDate: widget.firstDate,
+          lastDate: widget.lastDate,
           initialDate: _focusedDate,
           selectedDate: _selectedDate,
           onChanged: _handleYearChanged,
@@ -398,8 +418,8 @@ class _FlutterBSADCalendarState extends State<FlutterBSADCalendar> {
       case CalendarType.bs:
         return NepaliYearPicker(
           currentDate: _selectedDate,
-          firstDate: widget.firstDate!,
-          lastDate: widget.lastDate!,
+          firstDate: widget.firstDate,
+          lastDate: widget.lastDate,
           initialDate: _focusedDate,
           selectedDate: _selectedDate,
           onChanged: _handleYearChanged,
@@ -409,6 +429,8 @@ class _FlutterBSADCalendarState extends State<FlutterBSADCalendar> {
 
   @override
   Widget build(BuildContext context) {
+    double width = MediaQuery.of(context).size.width;
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -461,19 +483,22 @@ class _FlutterBSADCalendarState extends State<FlutterBSADCalendar> {
           ),
         ),
         const SizedBox(height: 5.0),
-        SizedBox(
-          height: 380,
-          child: _displayType == DatePickerMode.day
-              ? PageView.builder(
+        _displayType == DatePickerMode.day
+            ? Expanded(
+                // height: 380,
+                child: PageView.builder(
                   controller: _pageController,
-                  itemCount: DateUtils.monthDelta(
-                          widget.firstDate!, widget.lastDate!) +
-                      1,
+                  itemCount:
+                      DateUtils.monthDelta(widget.firstDate, widget.lastDate) +
+                          1,
                   itemBuilder: _buildWeekRow,
                   onPageChanged: _handleMonthPageChanged,
-                )
-              : _buildYearPicker(),
-        ),
+                ),
+              )
+            : SizedBox(
+                height: width,
+                child: _buildYearPicker(),
+              ),
       ],
     );
   }

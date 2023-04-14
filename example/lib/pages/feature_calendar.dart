@@ -18,7 +18,6 @@ class _FeatureCalendarState extends State<FeatureCalendar> {
   void initState() {
     super.initState();
 
-    NepaliUtils(Language.nepali);
     _calendarType = CalendarType.bs;
     _holidays = [
       DateTime(2023, 04, 14),
@@ -56,6 +55,7 @@ class _FeatureCalendarState extends State<FeatureCalendar> {
       ),
       body: FlutterBSADCalendar(
         calendarType: _calendarType,
+        initialDate: DateTime.now(),
         firstDate: DateTime(1970),
         lastDate: DateTime(2024),
         mondayWeek: false, // true is for Monday, false is  for Sunday
