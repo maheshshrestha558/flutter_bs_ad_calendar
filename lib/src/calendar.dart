@@ -116,8 +116,6 @@ class _FlutterBSADCalendarState extends State<FlutterBSADCalendar> {
     _daysInMonth = [];
     _selectedDate = DateTime.now();
     _focusedDate = widget.initialDate;
-    // widget.firstDate = widget.firstDate ?? ConstantData.firstDate;
-    // widget.lastDate = widget.lastDate ?? ConstantData.lastDate;
     _nepaliMonthDays = initializeDaysInMonths();
     _currentMonthIndex = widget.initialDate.month - 1;
     _pageController = PageController(initialPage: _currentMonthIndex);
@@ -176,27 +174,28 @@ class _FlutterBSADCalendarState extends State<FlutterBSADCalendar> {
   }
 
   void _handlePreviousMonth() {
-    int year =
-        _focusedDate.month == 1 ? _focusedDate.year - 1 : _focusedDate.year;
-    int month = _focusedDate.month == 1 ? 12 : _focusedDate.month - 1;
-    _focusedDate = DateTime(year, month, _focusedDate.day);
     _pageController.previousPage(
       duration: _monthScrollDuration,
       curve: Curves.easeInOut,
     );
+    int year =
+        _focusedDate.month == 1 ? _focusedDate.year - 1 : _focusedDate.year;
+    int month = _focusedDate.month == 1 ? 12 : _focusedDate.month - 1;
+    _focusedDate = DateTime(year, month, _focusedDate.day);
+
     _handleMonthChanged(_focusedDate);
     setState(() {});
   }
 
   void _handleNextMonth() {
-    int year =
-        _focusedDate.month == 12 ? _focusedDate.year + 1 : _focusedDate.year;
-    int month = _focusedDate.month == 12 ? 1 : _focusedDate.month + 1;
-    _focusedDate = DateTime(year, month, _focusedDate.day);
     _pageController.nextPage(
       duration: _monthScrollDuration,
       curve: Curves.easeInOut,
     );
+    int year =
+        _focusedDate.month == 12 ? _focusedDate.year + 1 : _focusedDate.year;
+    int month = _focusedDate.month == 12 ? 1 : _focusedDate.month + 1;
+    _focusedDate = DateTime(year, month, _focusedDate.day);
     _handleMonthChanged(_focusedDate);
     setState(() {});
   }
@@ -242,9 +241,7 @@ class _FlutterBSADCalendarState extends State<FlutterBSADCalendar> {
           ?.where((item) => item.date?.month == currentDate.month)
           .toList();
       widget.onMonthChanged?.call(date, monthsEvents);
-      // _focusedDate = DateTime(date.year, date.month);
     }
-    setState(() {});
   }
 
   void _handleDateSelected(DateTime currentDate) {
@@ -258,10 +255,16 @@ class _FlutterBSADCalendarState extends State<FlutterBSADCalendar> {
         .toList();
     widget.onDateSelected.call(date, todaysEvents);
     _focusedDate = DateTime(currentDate.year, currentDate.month);
-    if (Utils.differenceInMonths(_focusedDate, currentDate) > 0) {
-      _handleNextMonth();
-    } else if (Utils.differenceInMonths(_focusedDate, currentDate) < 0) {
-      _handlePreviousMonth();
+    print(
+        'month" ${Utils.differenceInMonths(_focusedDate, currentDate, widget.calendarType)}');
+    if (Utils.differenceInMonths(
+            _focusedDate, currentDate, widget.calendarType) >
+        0) {
+      _handleMonthPageChanged(_currentMonthIndex + 1);
+    } else if (Utils.differenceInMonths(
+            _focusedDate, currentDate, widget.calendarType) <
+        0) {
+      _handleMonthPageChanged(_currentMonthIndex - 1);
     }
     setState(() {});
   }
@@ -459,10 +462,10 @@ class _FlutterBSADCalendarState extends State<FlutterBSADCalendar> {
                         color: widget.primaryColor ??
                             Theme.of(context).primaryColor,
                       ),
-                      onPressed: Utils.isDisplayingFirstMonth(
+                      onPressed: () => Utils.isDisplayingFirstMonth(
                               widget.firstDate, _selectedDate)
                           ? null
-                          : _handlePreviousMonth,
+                          : _handleMonthPageChanged(_currentMonthIndex - 1),
                     ),
                     IconButton(
                       icon: Icon(
@@ -471,10 +474,10 @@ class _FlutterBSADCalendarState extends State<FlutterBSADCalendar> {
                         color: widget.primaryColor ??
                             Theme.of(context).primaryColor,
                       ),
-                      onPressed: Utils.isDisplayingLastMonth(
+                      onPressed: () => Utils.isDisplayingLastMonth(
                               widget.lastDate, _selectedDate)
                           ? null
-                          : _handleNextMonth,
+                          : _handleMonthPageChanged(_currentMonthIndex + 1),
                     ),
                   ],
                 ),
@@ -485,7 +488,6 @@ class _FlutterBSADCalendarState extends State<FlutterBSADCalendar> {
         const SizedBox(height: 5.0),
         _displayType == DatePickerMode.day
             ? Expanded(
-                // height: 380,
                 child: PageView.builder(
                   controller: _pageController,
                   itemCount:

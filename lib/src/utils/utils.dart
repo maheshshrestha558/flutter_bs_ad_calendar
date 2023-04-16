@@ -44,9 +44,14 @@ class Utils {
   ];
 
   /// Get the differene between two [DateTime] in month.
-  static int differenceInMonths(DateTime dt1, DateTime dt2) {
-    int months = (dt2.year - dt1.year) * 12 + (dt2.month - dt1.month);
-    if (dt2.day < dt1.day) {
+  static int differenceInMonths(
+      DateTime dt1, DateTime dt2, CalendarType calendarType) {
+    final date1 =
+        calendarType == CalendarType.ad ? dt1 : dt1.toNepaliDateTime();
+    final date2 =
+        calendarType == CalendarType.ad ? dt2 : dt2.toNepaliDateTime();
+    int months = (date2.year - date1.year) * 12 + (date2.month - date1.month);
+    if (dt2.day < date1.day) {
       months--;
     }
     return months;
