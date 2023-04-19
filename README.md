@@ -28,7 +28,7 @@ dependencies:
 *The full example is available [here](https://github.com/BwesShr/flutter_bs_ad_calendar/blob/main/example/lib/main.dart).*
 
 ```dart
-import 'package:horizontal_calendar/horizontal_calendar.dart';
+import 'package:flutter_bs_ad_calendar/flutter_bs_ad_calendar.dart';
 
     CalendarType _calendarType = CalendarType.ad;
 
