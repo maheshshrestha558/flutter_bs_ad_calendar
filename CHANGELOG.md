@@ -5,3 +5,7 @@
 ### 1.0.1
 
 * Fixed README file.
+
+### 1.0.2
+
+* README file changed.

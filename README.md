@@ -11,16 +11,13 @@ Calendar widget that can switch between Nepali Date [BS] and English Date [AD].
 * Changable between BS and AD
 * Dynamic events and holidays
 
-## Usage
-
-Make sure to check out [examples](https://github.com/BwesShr/flutter_bs_ad_calendar/blob/master/example/lib/main.dart) and [API docs](https://pub.dev/documentation/flutter_bs_ad_calendar/latest/) for more details.
 ### Installation
 
 Add the following line to `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  flutter_bs_ad_calendar: ^1.0.1
+  flutter_bs_ad_calendar: ^1.0.2
 ```
 
 ### Basic setup
