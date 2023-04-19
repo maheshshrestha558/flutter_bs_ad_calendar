@@ -1,3 +1,28 @@
+/*
+ * Copyright (c) 2023 Biwesh Shrestha
+ *
+ * Permission is hereby granted, free of charge, to any person
+ * obtaining a copy of this software and associated documentation
+ * files (the "Software"), to deal in the Software without
+ * restriction, including without limitation the rights to use,
+ * copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following
+ * conditions:
+ *
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+ * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+ * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+ * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+ * OTHER DEALINGS IN THE SOFTWARE.
+ */
+
 import 'package:flutter/material.dart';
 import 'package:nepali_utils/nepali_utils.dart';
 
@@ -173,32 +198,32 @@ class _FlutterBSADCalendarState extends State<FlutterBSADCalendar> {
     });
   }
 
-  void _handlePreviousMonth() {
-    _pageController.previousPage(
-      duration: _monthScrollDuration,
-      curve: Curves.easeInOut,
-    );
-    int year =
-        _focusedDate.month == 1 ? _focusedDate.year - 1 : _focusedDate.year;
-    int month = _focusedDate.month == 1 ? 12 : _focusedDate.month - 1;
-    _focusedDate = DateTime(year, month, _focusedDate.day);
+  // void _handlePreviousMonth() {
+  //   _pageController.previousPage(
+  //     duration: _monthScrollDuration,
+  //     curve: Curves.easeInOut,
+  //   );
+  //   int year =
+  //       _focusedDate.month == 1 ? _focusedDate.year - 1 : _focusedDate.year;
+  //   int month = _focusedDate.month == 1 ? 12 : _focusedDate.month - 1;
+  //   _focusedDate = DateTime(year, month, _focusedDate.day);
 
-    _handleMonthChanged(_focusedDate);
-    setState(() {});
-  }
+  //   _handleMonthChanged(_focusedDate);
+  //   setState(() {});
+  // }
 
-  void _handleNextMonth() {
-    _pageController.nextPage(
-      duration: _monthScrollDuration,
-      curve: Curves.easeInOut,
-    );
-    int year =
-        _focusedDate.month == 12 ? _focusedDate.year + 1 : _focusedDate.year;
-    int month = _focusedDate.month == 12 ? 1 : _focusedDate.month + 1;
-    _focusedDate = DateTime(year, month, _focusedDate.day);
-    _handleMonthChanged(_focusedDate);
-    setState(() {});
-  }
+  // void _handleNextMonth() {
+  //   _pageController.nextPage(
+  //     duration: _monthScrollDuration,
+  //     curve: Curves.easeInOut,
+  //   );
+  //   int year =
+  //       _focusedDate.month == 12 ? _focusedDate.year + 1 : _focusedDate.year;
+  //   int month = _focusedDate.month == 12 ? 1 : _focusedDate.month + 1;
+  //   _focusedDate = DateTime(year, month, _focusedDate.day);
+  //   _handleMonthChanged(_focusedDate);
+  //   setState(() {});
+  // }
 
   void _handleMonthPageChanged(int monthPage) {
     if (monthPage > _currentMonthIndex) {
@@ -245,27 +270,24 @@ class _FlutterBSADCalendarState extends State<FlutterBSADCalendar> {
   }
 
   void _handleDateSelected(DateTime currentDate) {
-    _selectedDate = currentDate;
-
     var date = widget.calendarType == CalendarType.ad
         ? currentDate
         : currentDate.toNepaliDateTime();
+    _focusedDate = currentDate;
+    // if (Utils.differenceInMonths(
+    //         _focusedDate, currentDate, widget.calendarType) >
+    //     0) {
+    //   _handleMonthPageChanged(_currentMonthIndex + 1);
+    // } else if (Utils.differenceInMonths(
+    //         _focusedDate, currentDate, widget.calendarType) <
+    //     0) {
+    //   _handleMonthPageChanged(_currentMonthIndex - 1);
+    // }
     List<Event>? todaysEvents = widget.events
         ?.where((item) => item.date?.difference(currentDate).inDays == 0)
         .toList();
+    _selectedDate = currentDate;
     widget.onDateSelected.call(date, todaysEvents);
-    _focusedDate = DateTime(currentDate.year, currentDate.month);
-    print(
-        'month" ${Utils.differenceInMonths(_focusedDate, currentDate, widget.calendarType)}');
-    if (Utils.differenceInMonths(
-            _focusedDate, currentDate, widget.calendarType) >
-        0) {
-      _handleMonthPageChanged(_currentMonthIndex + 1);
-    } else if (Utils.differenceInMonths(
-            _focusedDate, currentDate, widget.calendarType) <
-        0) {
-      _handleMonthPageChanged(_currentMonthIndex - 1);
-    }
     setState(() {});
   }
 
