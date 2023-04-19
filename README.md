@@ -20,7 +20,7 @@ Add the following line to `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  flutter_bs_ad_calendar: ^1.0.0
+  flutter_bs_ad_calendar: ^1.0.1
 ```
 
 ### Basic setup
