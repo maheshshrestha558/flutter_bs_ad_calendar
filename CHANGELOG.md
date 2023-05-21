@@ -12,4 +12,4 @@
 * 
 ### 1.0.3
 
-* Package available as date picker as well.
+* Package available as date picker.
