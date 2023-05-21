@@ -32,12 +32,12 @@ import '../../flutter_bs_ad_calendar.dart';
 class MonthName extends StatelessWidget {
   const MonthName({
     super.key,
-    required this.focusedDate,
+    required this.date,
     required this.calendarType,
     required this.primaryColor,
   });
 
-  final DateTime focusedDate;
+  final DateTime date;
   final CalendarType calendarType;
   final Color? primaryColor;
 
@@ -58,12 +58,11 @@ class MonthName extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Text(
-                  NepaliDateFormat('MMMM yyyy')
-                      .format(focusedDate.toNepaliDateTime()),
+                  NepaliDateFormat('MMMM yyyy').format(date.toNepaliDateTime()),
                   style: titleStyle,
                 ),
                 Text(
-                  '${DateFormat.MMMM().format(focusedDate)}/${DateFormat.MMMM().format(focusedDate.add(const Duration(days: 32)))}',
+                  '${DateFormat.MMMM().format(date)}/${DateFormat.MMMM().format(date.add(const Duration(days: 32)))}',
                   style: subTitleStyle,
                 ),
               ],
@@ -72,11 +71,11 @@ class MonthName extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Text(
-                  DateFormat('MMMM yyyy').format(focusedDate),
+                  DateFormat('MMMM yyyy').format(date),
                   style: titleStyle,
                 ),
                 Text(
-                  '${NepaliDateFormat.MMMM().format(focusedDate.toNepaliDateTime())}/${NepaliDateFormat.MMMM().format(focusedDate.add(const Duration(days: 32)).toNepaliDateTime())}',
+                  '${NepaliDateFormat.MMMM().format(date.toNepaliDateTime())}/${NepaliDateFormat.MMMM().format(date.add(const Duration(days: 32)).toNepaliDateTime())}',
                   style: subTitleStyle,
                 ),
               ],

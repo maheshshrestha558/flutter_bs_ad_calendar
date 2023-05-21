@@ -33,12 +33,14 @@ class DayBuilder extends StatelessWidget {
     Key? key,
     required this.dayToBuild,
     required this.calendarType,
-    required this.color,
+    required this.dayColor,
+    required this.secondaryDayColor,
   }) : super(key: key);
 
   final DateTime dayToBuild;
   final CalendarType calendarType;
-  final Color? color;
+  final Color? dayColor;
+  final Color? secondaryDayColor;
 
   @override
   Widget build(BuildContext context) {
@@ -51,21 +53,23 @@ class DayBuilder extends StatelessWidget {
                 ? NepaliDateFormat.d().format(dayToBuild.toNepaliDateTime())
                 : '${dayToBuild.day}',
             textAlign: TextAlign.center,
-            style:
-                Theme.of(context).textTheme.bodyMedium?.copyWith(color: color),
+            style: Theme.of(context)
+                .textTheme
+                .bodyMedium
+                ?.copyWith(color: dayColor),
           ),
         ),
-        Container(
-          alignment: Alignment.bottomRight,
-          padding: const EdgeInsets.all(8.0),
+        Positioned(
+          right: 0.0,
+          bottom: 0.0,
           child: Text(
             calendarType == CalendarType.bs
                 ? '${dayToBuild.day}'
                 : NepaliDateFormat.d().format(dayToBuild.toNepaliDateTime()),
             style: Theme.of(context)
                 .textTheme
-                .bodySmall
-                ?.copyWith(fontSize: 10.0, color: color),
+                .labelSmall
+                ?.copyWith(fontSize: 8.0, color: secondaryDayColor),
           ),
         ),
       ],

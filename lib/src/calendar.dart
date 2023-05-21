@@ -47,6 +47,7 @@ class FlutterBSADCalendar<T> extends StatefulWidget {
     this.primaryColor,
     this.weekColor,
     this.holidayColor,
+    this.eventColor,
     this.todayDecoration,
     this.selectedDayDecoration,
     this.dayBuilder,
@@ -103,6 +104,9 @@ class FlutterBSADCalendar<T> extends StatefulWidget {
   /// Holiday calendar theme color
   final Color? holidayColor;
 
+  /// Event calendar theme color
+  final Color? eventColor;
+
   /// Decoration for today's cell.
   final BoxDecoration? todayDecoration;
 
@@ -154,6 +158,7 @@ class _FlutterBSADCalendarState extends State<FlutterBSADCalendar> {
     });
   }
 
+  /// Get the days in the month in english calendar
   List<DateTime> _englishDaysInMonth(DateTime date) {
     final first = Utils.firstDayOfMonth(date);
     final daysBefore =
@@ -169,7 +174,7 @@ class _FlutterBSADCalendarState extends State<FlutterBSADCalendar> {
     return Utils.daysInRange(firstToDisplay, lastToDisplay).toList();
   }
 
-  /// Get the days in the month
+  /// Get the days in the month in nepali calendar
   List<DateTime> _nepaliDaysInMonth(DateTime date) {
     NepaliDateTime nepalitDate = date.toNepaliDateTime();
     DateTime first =
@@ -198,33 +203,7 @@ class _FlutterBSADCalendarState extends State<FlutterBSADCalendar> {
     });
   }
 
-  // void _handlePreviousMonth() {
-  //   _pageController.previousPage(
-  //     duration: _monthScrollDuration,
-  //     curve: Curves.easeInOut,
-  //   );
-  //   int year =
-  //       _focusedDate.month == 1 ? _focusedDate.year - 1 : _focusedDate.year;
-  //   int month = _focusedDate.month == 1 ? 12 : _focusedDate.month - 1;
-  //   _focusedDate = DateTime(year, month, _focusedDate.day);
-
-  //   _handleMonthChanged(_focusedDate);
-  //   setState(() {});
-  // }
-
-  // void _handleNextMonth() {
-  //   _pageController.nextPage(
-  //     duration: _monthScrollDuration,
-  //     curve: Curves.easeInOut,
-  //   );
-  //   int year =
-  //       _focusedDate.month == 12 ? _focusedDate.year + 1 : _focusedDate.year;
-  //   int month = _focusedDate.month == 12 ? 1 : _focusedDate.month + 1;
-  //   _focusedDate = DateTime(year, month, _focusedDate.day);
-  //   _handleMonthChanged(_focusedDate);
-  //   setState(() {});
-  // }
-
+  // callend on page changed
   void _handleMonthPageChanged(int monthPage) {
     if (monthPage > _currentMonthIndex) {
       int year =
@@ -243,19 +222,21 @@ class _FlutterBSADCalendarState extends State<FlutterBSADCalendar> {
     setState(() {});
   }
 
+  // on year changed
   void _handleYearChanged(DateTime value) {
     if (value.isBefore(widget.firstDate)) {
       value = widget.firstDate;
     } else if (value.isAfter(widget.lastDate)) {
       value = widget.lastDate;
     }
-
-    setState(() {
-      _displayType = DatePickerMode.day;
-      _handleMonthChanged(value);
-    });
+    _displayType = DatePickerMode.day;
+    _focusedDate = value;
+    _selectedDate = value;
+    _handleMonthChanged(value);
+    setState(() {});
   }
 
+  // on month changed
   void _handleMonthChanged(DateTime currentDate) {
     if (_focusedDate.year != currentDate.year ||
         _focusedDate.month != currentDate.month) {
@@ -269,20 +250,12 @@ class _FlutterBSADCalendarState extends State<FlutterBSADCalendar> {
     }
   }
 
+  // on date selected
   void _handleDateSelected(DateTime currentDate) {
     var date = widget.calendarType == CalendarType.ad
         ? currentDate
         : currentDate.toNepaliDateTime();
-    _focusedDate = currentDate;
-    // if (Utils.differenceInMonths(
-    //         _focusedDate, currentDate, widget.calendarType) >
-    //     0) {
-    //   _handleMonthPageChanged(_currentMonthIndex + 1);
-    // } else if (Utils.differenceInMonths(
-    //         _focusedDate, currentDate, widget.calendarType) <
-    //     0) {
-    //   _handleMonthPageChanged(_currentMonthIndex - 1);
-    // }
+
     List<Event>? todaysEvents = widget.events
         ?.where((item) => item.date?.difference(currentDate).inDays == 0)
         .toList();
@@ -291,6 +264,7 @@ class _FlutterBSADCalendarState extends State<FlutterBSADCalendar> {
     setState(() {});
   }
 
+  // check if event exist in the selected date
   bool _checkEventOnDate(DateTime day) {
     if (widget.events != null) {
       for (Event event in widget.events!) {
@@ -353,11 +327,15 @@ class _FlutterBSADCalendarState extends State<FlutterBSADCalendar> {
           ),
           itemBuilder: (context, dayIndex) {
             DateTime dayToBuild = _daysInMonth[dayIndex];
-            Color? color;
+            Color? mainDayColor;
+            Color? secondaryDayColor =
+                Theme.of(context).textTheme.bodyMedium?.color;
             BoxDecoration decoration = const BoxDecoration();
 
-            if (Utils.isSameDay(dayToBuild, _selectedDate)) {
-              color = Colors.white;
+            if (Utils.isSameDay(dayToBuild, _selectedDate) &&
+                Utils.isSameMonth(
+                    widget.calendarType, _focusedDate, dayToBuild)) {
+              mainDayColor = Colors.white;
               decoration = widget.selectedDayDecoration ??
                   BoxDecoration(
                     color: Theme.of(context).colorScheme.primary,
@@ -367,7 +345,7 @@ class _FlutterBSADCalendarState extends State<FlutterBSADCalendar> {
                     shape: BoxShape.circle,
                   );
             } else if (Utils.isToday(dayToBuild)) {
-              color = Theme.of(context).primaryColorDark;
+              mainDayColor = Theme.of(context).primaryColorDark;
               decoration = widget.todayDecoration ??
                   BoxDecoration(
                     color: Theme.of(context).primaryColorLight,
@@ -375,24 +353,31 @@ class _FlutterBSADCalendarState extends State<FlutterBSADCalendar> {
                   );
             } else if (!Utils.isSameMonth(
                 widget.calendarType, _focusedDate, dayToBuild)) {
-              color = Colors.grey.withOpacity(0.5);
+              mainDayColor = Colors.grey.withOpacity(0.5);
+              secondaryDayColor = Colors.grey.withOpacity(0.5);
             } else if (Utils.isWeekend(dayToBuild,
                 weekendDays: widget.weekendDays)) {
-              color = widget.holidayColor ??
+              mainDayColor = widget.holidayColor ??
                   Theme.of(context).colorScheme.secondary;
             } else if (Utils.holidays(dayToBuild, widget.holidays)) {
-              color = widget.holidayColor ??
+              mainDayColor = widget.holidayColor ??
                   Theme.of(context).colorScheme.secondary;
             } else {
-              color = Theme.of(context).textTheme.bodyMedium?.color;
+              mainDayColor = Theme.of(context).textTheme.bodyMedium?.color;
             }
 
             return GestureDetector(
-              onTap: () => _handleDateSelected(dayToBuild),
+              onTap: () {
+                if (Utils.isSameMonth(
+                    widget.calendarType, _focusedDate, dayToBuild)) {
+                  _handleDateSelected(dayToBuild);
+                }
+              },
               child: Container(
                 decoration: decoration,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 8.0,
+                margin: const EdgeInsets.symmetric(
+                  horizontal: 3.0,
+                  vertical: 2.0,
                 ),
                 child: Stack(
                   children: [
@@ -400,25 +385,31 @@ class _FlutterBSADCalendarState extends State<FlutterBSADCalendar> {
                         ? DayBuilder(
                             dayToBuild: dayToBuild,
                             calendarType: widget.calendarType,
-                            color: color,
+                            dayColor: mainDayColor,
+                            secondaryDayColor: secondaryDayColor,
                           )
                         : widget.dayBuilder!(dayToBuild),
-                    Positioned(
-                      bottom: 0.0,
+                    Align(
+                      alignment: Alignment.bottomLeft,
                       child: Visibility(
                         visible: _checkEventOnDate(dayToBuild),
                         child: Container(
                           width: 5.0,
                           height: 5.0,
+                          margin: const EdgeInsets.symmetric(
+                            horizontal: 10.0,
+                            vertical: 10.0,
+                          ),
                           decoration: BoxDecoration(
-                            color: Theme.of(context).colorScheme.secondary,
+                            color: widget.eventColor ??
+                                Theme.of(context).colorScheme.secondary,
                             borderRadius: const BorderRadius.all(
-                              Radius.circular(500.0),
+                              Radius.circular(1000.0),
                             ),
                           ),
                         ),
                       ),
-                    )
+                    ),
                   ],
                 ),
               ),
@@ -442,20 +433,18 @@ class _FlutterBSADCalendarState extends State<FlutterBSADCalendar> {
         );
       case CalendarType.bs:
         return NepaliYearPicker(
-          currentDate: _selectedDate,
-          firstDate: widget.firstDate,
-          lastDate: widget.lastDate,
-          initialDate: _focusedDate,
-          selectedDate: _selectedDate,
-          onChanged: _handleYearChanged,
+          currentDate: _selectedDate.toNepaliDateTime(),
+          firstDate: widget.firstDate.toNepaliDateTime(),
+          lastDate: widget.lastDate.toNepaliDateTime(),
+          initialDate: _focusedDate.toNepaliDateTime(),
+          selectedDate: _selectedDate.toNepaliDateTime(),
+          onChanged: (date) => _handleYearChanged(date.toDateTime()),
         );
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    double width = MediaQuery.of(context).size.width;
-
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -468,7 +457,7 @@ class _FlutterBSADCalendarState extends State<FlutterBSADCalendar> {
               GestureDetector(
                 onTap: _handleDisplayTypeChanged,
                 child: MonthName(
-                  focusedDate: _focusedDate,
+                  date: _focusedDate,
                   primaryColor: widget.primaryColor,
                   calendarType: widget.calendarType,
                 ),
@@ -519,8 +508,7 @@ class _FlutterBSADCalendarState extends State<FlutterBSADCalendar> {
                   onPageChanged: _handleMonthPageChanged,
                 ),
               )
-            : SizedBox(
-                height: width,
+            : Expanded(
                 child: _buildYearPicker(),
               ),
       ],

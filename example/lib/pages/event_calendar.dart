@@ -100,12 +100,12 @@ class _EventCalendarState extends State<EventCalendar> {
         firstDate: DateTime(1970),
         lastDate: DateTime(2024),
         mondayWeek: false, // true is for Monday, false is  for Sunday
+        eventColor: Colors.purpleAccent,
         weekendDays: const [
           DateTime.saturday,
         ],
         events: _events,
         onMonthChanged: (date, events) {
-          print('events: ${events?.length}');
           setState(() {
             _selectedDate = date;
             _selectedDateEvents = events;

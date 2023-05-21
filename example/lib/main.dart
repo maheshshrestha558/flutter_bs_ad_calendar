@@ -2,6 +2,7 @@ import 'dart:collection';
 
 import 'package:calendar_example/pages/dynamic_calendar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bs_ad_calendar/flutter_bs_ad_calendar.dart';
 
 import 'pages/basic_calendar.dart';
 import 'pages/event_calendar.dart';
@@ -94,6 +95,25 @@ class _MyHomePageState extends State<MyHomePage> {
                 context,
                 MaterialPageRoute(builder: (_) => const EventCalendar()),
               ),
+            ),
+            const SizedBox(height: 15.0),
+            ElevatedButton(
+              child: const Text('Nepali Calendar Dialog'),
+              onPressed: () async {
+                DateTime? date = await showFlutterBSADCalendarDialog(
+                  context: context,
+                );
+              },
+            ),
+            const SizedBox(height: 15.0),
+            ElevatedButton(
+              child: const Text('English Calendar Dialog'),
+              onPressed: () async {
+                DateTime? date = await showFlutterBSADCalendarDialog(
+                  context: context,
+                  calendarType: CalendarType.ad,
+                );
+              },
             ),
             const SizedBox(height: 30.0),
           ],

@@ -9,3 +9,7 @@
 ### 1.0.2
 
 * README file changed.
+* 
+### 1.0.3
+
+* Package available as date picker as well.

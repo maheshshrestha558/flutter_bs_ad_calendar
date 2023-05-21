@@ -28,35 +28,35 @@ import 'package:nepali_utils/nepali_utils.dart';
 
 class NepaliYearPicker extends StatefulWidget {
   NepaliYearPicker({
-    super.key,
-    DateTime? currentDate,
+    Key? key,
+    required this.currentDate,
     required this.firstDate,
     required this.lastDate,
-    DateTime? initialDate,
+    required this.initialDate,
     required this.selectedDate,
     required this.onChanged,
-  })  : currentDate = DateUtils.dateOnly(currentDate ?? DateTime.now()),
-        initialDate = DateUtils.dateOnly(initialDate ?? selectedDate);
+  })  : assert(!firstDate.isAfter(lastDate)),
+        super(key: key);
 
   /// This date is subtly highlighted in the picker.
-  final DateTime currentDate;
+  final NepaliDateTime currentDate;
 
   /// The earliest date the user is permitted to pick.
-  final DateTime firstDate;
+  final NepaliDateTime firstDate;
 
   /// The latest date the user is permitted to pick.
-  final DateTime lastDate;
+  final NepaliDateTime lastDate;
 
   /// The initial date to center the year display around.
-  final DateTime initialDate;
+  final NepaliDateTime initialDate;
 
   /// The currently selected date.
   ///
   /// This date is highlighted in the picker.
-  final DateTime selectedDate;
+  final NepaliDateTime selectedDate;
 
   /// Called when the user picks a year.
-  final ValueChanged<DateTime> onChanged;
+  final ValueChanged<NepaliDateTime> onChanged;
 
   @override
   State<NepaliYearPicker> createState() => _NepaliYearPickerState();
@@ -138,8 +138,8 @@ class _NepaliYearPickerState extends State<NepaliYearPicker> {
               }
 
               return InkWell(
-                onTap: () =>
-                    widget.onChanged(DateTime(year, widget.initialDate.month)),
+                onTap: () => widget.onChanged(NepaliDateTime(
+                    year, widget.initialDate.month, widget.initialDate.day)),
                 child: Center(
                   child: Container(
                     decoration: decoration,
@@ -150,11 +150,7 @@ class _NepaliYearPickerState extends State<NepaliYearPicker> {
                         selected: isSelected,
                         button: true,
                         child: Text(
-                          NepaliUnicode.convert(
-                              DateTime(year, widget.initialDate.month)
-                                  .toNepaliDateTime()
-                                  .year
-                                  .toString()),
+                          year.toString(),
                           style: Theme.of(context)
                               .textTheme
                               .bodyLarge
