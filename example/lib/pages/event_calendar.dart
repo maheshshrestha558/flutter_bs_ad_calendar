@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bs_ad_calendar/flutter_bs_ad_calendar.dart';
-import 'package:nepali_utils/nepali_utils.dart';
 
 class Content {
   String? title;
@@ -98,7 +97,7 @@ class _EventCalendarState extends State<EventCalendar> {
         calendarType: _calendarType,
         initialDate: DateTime.now(),
         firstDate: DateTime(1970),
-        lastDate: DateTime(2024),
+        lastDate: DateTime(2100),
         mondayWeek: false, // true is for Monday, false is  for Sunday
         eventColor: Colors.purpleAccent,
         weekendDays: const [

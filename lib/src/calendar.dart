@@ -299,7 +299,7 @@ class _FlutterBSADCalendarState extends State<FlutterBSADCalendar> {
           : Utils.englishWeek;
     }
 
-    return Column(
+    return Stack(
       children: [
         Table(
           children: <TableRow>[
@@ -322,6 +322,7 @@ class _FlutterBSADCalendarState extends State<FlutterBSADCalendar> {
         GridView.builder(
           shrinkWrap: true,
           itemCount: _daysInMonth.length,
+          padding: EdgeInsets.zero,
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 7,
           ),
@@ -331,7 +332,6 @@ class _FlutterBSADCalendarState extends State<FlutterBSADCalendar> {
             Color? secondaryDayColor =
                 Theme.of(context).textTheme.bodyMedium?.color;
             BoxDecoration decoration = const BoxDecoration();
-
             if (Utils.isSameDay(dayToBuild, _selectedDate) &&
                 Utils.isSameMonth(
                     widget.calendarType, _focusedDate, dayToBuild)) {
@@ -423,22 +423,28 @@ class _FlutterBSADCalendarState extends State<FlutterBSADCalendar> {
   Widget _buildYearPicker() {
     switch (widget.calendarType) {
       case CalendarType.ad:
-        return YearPicker(
-          currentDate: _selectedDate,
-          firstDate: widget.firstDate,
-          lastDate: widget.lastDate,
-          initialDate: _focusedDate,
-          selectedDate: _selectedDate,
-          onChanged: _handleYearChanged,
+        return SizedBox(
+          width: double.infinity,
+          child: YearPicker(
+            currentDate: _selectedDate,
+            firstDate: widget.firstDate,
+            lastDate: widget.lastDate,
+            initialDate: _focusedDate,
+            selectedDate: _selectedDate,
+            onChanged: _handleYearChanged,
+          ),
         );
       case CalendarType.bs:
-        return NepaliYearPicker(
-          currentDate: _selectedDate.toNepaliDateTime(),
-          firstDate: widget.firstDate.toNepaliDateTime(),
-          lastDate: widget.lastDate.toNepaliDateTime(),
-          initialDate: _focusedDate.toNepaliDateTime(),
-          selectedDate: _selectedDate.toNepaliDateTime(),
-          onChanged: (date) => _handleYearChanged(date.toDateTime()),
+        return SizedBox(
+          width: double.infinity,
+          child: NepaliYearPicker(
+            currentDate: _selectedDate.toNepaliDateTime(),
+            firstDate: widget.firstDate.toNepaliDateTime(),
+            lastDate: widget.lastDate.toNepaliDateTime(),
+            initialDate: _focusedDate.toNepaliDateTime(),
+            selectedDate: _selectedDate.toNepaliDateTime(),
+            onChanged: (date) => _handleYearChanged(date.toDateTime()),
+          ),
         );
     }
   }
@@ -446,10 +452,9 @@ class _FlutterBSADCalendarState extends State<FlutterBSADCalendar> {
   @override
   Widget build(BuildContext context) {
     return Column(
-      mainAxisSize: MainAxisSize.min,
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 15.0),
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -468,8 +473,8 @@ class _FlutterBSADCalendarState extends State<FlutterBSADCalendar> {
                   children: [
                     IconButton(
                       icon: Icon(
-                        Icons.chevron_left,
-                        size: 30.0,
+                        Icons.arrow_back_ios,
+                        size: 20.0,
                         color: widget.primaryColor ??
                             Theme.of(context).primaryColor,
                       ),
@@ -480,8 +485,8 @@ class _FlutterBSADCalendarState extends State<FlutterBSADCalendar> {
                     ),
                     IconButton(
                       icon: Icon(
-                        Icons.chevron_right,
-                        size: 30.0,
+                        Icons.arrow_forward_ios,
+                        size: 20.0,
                         color: widget.primaryColor ??
                             Theme.of(context).primaryColor,
                       ),
@@ -496,11 +501,15 @@ class _FlutterBSADCalendarState extends State<FlutterBSADCalendar> {
             ],
           ),
         ),
-        const SizedBox(height: 5.0),
+        const SizedBox(height: 5.0), // Optional
         _displayType == DatePickerMode.day
             ? Expanded(
                 child: PageView.builder(
+                  scrollDirection: Axis.horizontal,
                   controller: _pageController,
+                  pageSnapping: true,
+                  padEnds: true,
+                  allowImplicitScrolling: true,
                   itemCount:
                       DateUtils.monthDelta(widget.firstDate, widget.lastDate) +
                           1,

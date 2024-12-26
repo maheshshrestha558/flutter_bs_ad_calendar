@@ -52,10 +52,11 @@ class MonthName extends StatelessWidget {
         fontSize: 12.0, color: primaryColor ?? Theme.of(context).primaryColor);
 
     return SizedBox(
-      height: 48.0,
+      height: 40.0,
       child: calendarType == CalendarType.bs
           ? Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
                   NepaliDateFormat('MMMM yyyy').format(date.toNepaliDateTime()),

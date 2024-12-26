@@ -60,7 +60,7 @@ class DayBuilder extends StatelessWidget {
           ),
         ),
         Positioned(
-          right: 0.0,
+          right: 5.0,
           bottom: 0.0,
           child: Text(
             calendarType == CalendarType.bs

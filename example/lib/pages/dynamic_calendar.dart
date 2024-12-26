@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bs_ad_calendar/flutter_bs_ad_calendar.dart';
-import 'package:nepali_utils/nepali_utils.dart';
 
 class DynamicCalendar extends StatefulWidget {
   const DynamicCalendar({Key? key}) : super(key: key);
@@ -43,7 +42,7 @@ class _DynamicCalendarState extends State<DynamicCalendar> {
         initialDate: DateTime.now(),
         calendarType: _calendarType,
         firstDate: DateTime(1970),
-        lastDate: DateTime(2024),
+        lastDate: DateTime(2100),
         onMonthChanged: (date, events) {
           setState(() {
             _selectedDate = date;

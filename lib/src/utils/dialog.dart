@@ -28,7 +28,7 @@ Future<DateTime?> showFlutterBSADCalendarDialog({
       child: FlutterBSADCalendar(
         initialDate: DateTime.now(),
         firstDate: DateTime(1970),
-        lastDate: DateTime(2024),
+        lastDate: DateTime(2100),
         calendarType: calendarType ?? CalendarType.bs,
         onDateSelected: (date, events) => Navigator.of(context).pop(date),
       ),
