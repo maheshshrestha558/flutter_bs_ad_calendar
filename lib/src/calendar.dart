@@ -51,6 +51,7 @@ class FlutterBSADCalendar<T> extends StatefulWidget {
     this.todayDecoration,
     this.selectedDayDecoration,
     this.dayBuilder,
+    this.headerheight,
     required this.onDateSelected,
     this.onMonthChanged,
   })  : initialDate = DateUtils.dateOnly(initialDate),
@@ -106,6 +107,7 @@ class FlutterBSADCalendar<T> extends StatefulWidget {
 
   /// Event calendar theme color
   final Color? eventColor;
+  double? headerheight;
 
   /// Decoration for today's cell.
   final BoxDecoration? todayDecoration;
@@ -462,6 +464,7 @@ class _FlutterBSADCalendarState extends State<FlutterBSADCalendar> {
               GestureDetector(
                 onTap: _handleDisplayTypeChanged,
                 child: MonthName(
+                  headerheight: widget.headerheight,
                   date: _focusedDate,
                   primaryColor: widget.primaryColor,
                   calendarType: widget.calendarType,
