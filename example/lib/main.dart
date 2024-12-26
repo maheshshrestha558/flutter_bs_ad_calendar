@@ -1,5 +1,3 @@
-import 'dart:collection';
-
 import 'package:calendar_example/pages/dynamic_calendar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bs_ad_calendar/flutter_bs_ad_calendar.dart';

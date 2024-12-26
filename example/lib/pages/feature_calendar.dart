@@ -56,6 +56,7 @@ class _FeatureCalendarState extends State<FeatureCalendar> {
         children: [
           Expanded(
             child: FlutterBSADCalendar(
+              headerheight: 12,
               calendarType: _calendarType,
               initialDate: DateTime.now(),
               firstDate: DateTime(1970),
