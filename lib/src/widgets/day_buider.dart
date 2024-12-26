@@ -69,7 +69,7 @@ class DayBuilder extends StatelessWidget {
             style: Theme.of(context)
                 .textTheme
                 .labelSmall
-                ?.copyWith(fontSize: 8.0, color: secondaryDayColor),
+                ?.copyWith(fontSize: 8.0, color: dayColor),
           ),
         ),
       ],
